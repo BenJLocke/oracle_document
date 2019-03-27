@@ -1,0 +1,35 @@
+https://docs.cucumber.io/guides/10-minute-tutorial/
+
+cucumber是BDD(Behavior-driven development，行为驱动开发)的一个自动化测试的副产品。它使用自然语言来描述测试，使得非程序员可以理解他们。Gherkin是这种自然语言测试的简单语法，而Cucumber是可以执行它们的工具。关于BDD有兴趣自行了解。附cucumber官网链接，里面也有关于BDD的信息。
+cucumber本质上是使用根据正则表达式匹配自然语言，然后依次执行对应的方法，以达到测试的目的。
+本文基本上只是官网的搬运工，摘要了部分信息，最好还是看官网文档。
+Gherkin
+Gherkin是自然语言测试的简单语法。
+一个完整的测试是由多个step组成的，step即最小单元，如何复用step是非常关键的问题。多个step组成一个Scenario，即一个完整的测试case。多个Scenario组成一个Feature，即一组相关的测试case。
+关键字
+
+Feature
+Example（or Scenario）
+Given，When，Then，And，But（steps）
+Background
+Scenario Outline (or Scenario Template)
+Examples (or Scenarios)
+
+一个简单的例子
+Feature: Is it friday yet?
+  this is a descriptions
+  Everybody want to know when it's Friday
+
+  Scenario: Sunday isn't Friday
+    Given today is Sunday
+    When I ask whether it's Friday yet
+    Then I should be told "Nope"
+
+  Scenario: Friday is Friday
+    Given today is Friday
+    When I ask whether it's Friday yet
+    Then I should be told "TGIF"
+
+作者：EmilioWong
+链接：https://www.jianshu.com/p/3857f2c3a8d4
+来源：简书
