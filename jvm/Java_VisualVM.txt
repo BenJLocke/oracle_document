@@ -1,0 +1,9 @@
+https://visualvm.github.io/?Java_VisualVM
+https://docs.oracle.com/javase/8/
+https://visualvm.github.io/gettingstarted.html?Java_VisualVM
+https://www.oracle.com/technetwork/java/javase/index-138283.html
+https://visualvm.github.io/troubleshooting.html?Java_VisualVM
+https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/
+https://visualvm.github.io/extending.html?Java_VisualVM
+https://docs.oracle.com/javase/7/docs/webnotes/tsg/index.html
+
