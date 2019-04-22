@@ -7,3 +7,8 @@ https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/
 https://visualvm.github.io/extending.html?Java_VisualVM
 https://docs.oracle.com/javase/7/docs/webnotes/tsg/index.html
 
+http://openjdk.java.net/guide/intro.html
+https://docs.oracle.com/javase/6/docs/technotes/guides/jmx/JMX_1_4_specification.pdf
+https://www.oracle.com/technetwork/java/index.html
+https://docs.oracle.com/javase/6/docs/technotes/guides/jmx/index.html
+https://docs.oracle.com/javase/tutorial/jmx/overview/why.html
