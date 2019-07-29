@@ -135,6 +135,8 @@ Verification ID: bc8d984e
 Message ID: 7b79b084-8629-47be-ae7a-6f71254e69e0
 
 
+ansible的使用：
+https://docs.ansible.com/ansible/latest/
 
 
 $ vagrant init ansible/tower
