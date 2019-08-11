@@ -51,6 +51,14 @@ Optionally initialize the database and enable automatic start:
 systemctl enable postgresql-11
 systemctl start postgresql-11
 
+postgres                   postgresql96-check-db-dir  postgresql96-setup         
+[root@linux ansible-tower-setup-bundle-3.5.1-1.el7]# /usr/pgsql-9.6/bin/postgresql96-setup initdb
+Initializing database ... OK
+
+[root@linux ansible-tower-setup-bundle-3.5.1-1.el7]# systemctl enable postgresql-9.6.service 
+Created symlink from /etc/systemd/system/multi-user.target.wants/postgresql-9.6.service to /usr/lib/systemd/system/postgresql-9.6.service.
+[root@linux ansible-tower-setup-bundle-3.5.1-1.el7]# systemctl start postgresql-9.6.service 
+
 
 postgres 用户创建
 https://blog.csdn.net/eagle89/article/details/80363365
@@ -83,7 +91,9 @@ ansible=>
 
 rabbitmq安装
 https://blog.csdn.net/hellozpc/article/details/81436980
+https://blog.csdn.net/hellozpc/article/details/81436980
 访问： http://192.168.0.21:15672/#/
+       http://192.168.0.100:25672
 默认账号密码是： guest/guest，只能在本地访问；
 
 [root@i5 tower_license]# ansible-tower-service restart
@@ -109,8 +119,26 @@ https://blog.csdn.net/q315686687/article/details/80681642
 python -m py_compile __init__.py
 python -O -m py_compile __init__.py
 
+使用这个
+[root@linux tmp]# /opt/rh/rh-python36/root/usr/bin/python3 -m compileall __init__.pyc 
+
+/var/lib/awx/venv/awx/lib64/python3.6/site-packages/tower_license
+
 启动ansible tower
 ansible-tower-service restart
+
+安装公钥私钥
+ssh-keygen -N "" -b 4096 -t rsa -C "Ansible Public Key"
+ssh-copy-id -i /root/.ssh/id_rsa root@localhost​
+
+测试ansible
+[root@linux ansible-tower-setup-bundle-3.5.1-1.el7]# ansible localhost -m command -a ls
+127.0.0.1 | CHANGED | rc=0 >>
+anaconda-ks.cfg
+ansible
+initial-setup-ks.cfg
+releases.ansible.com
+
 
 pip的安装
 https://pip.pypa.io/en/stable/installing/
@@ -118,8 +146,35 @@ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python get-pip.py
 
 
+反编译工具：
+[root@linux py]# python -O -m py_compile  __init__.pyc           
+Sorry: TypeError: compile() expected string without null bytes[root@linux py]# pip install uncompyle6
+DEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7. More details about Python 2 support in pip, can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support
+Collecting uncompyle6
+  Downloading https://files.pythonhosted.org/packages/7b/15/551a313a11d80c9cab9a0772a212ccda9725559d364b22f26302b65e3525/uncompyle6-3.3.5-py27-none-any.whl (234kB)
+     |████████████████████████████████| 235kB 481kB/s 
+Collecting spark-parser<1.9.0,>=1.8.7 (from uncompyle6)
+  Downloading https://files.pythonhosted.org/packages/d4/7f/8ac36ff59340cd63c46370c366fd023f3a458d4819cb58df40072d470e07/spark_parser-1.8.9-py2-none-any.whl
+Collecting xdis<4.1.0,>=4.0.2 (from uncompyle6)
+  Downloading https://files.pythonhosted.org/packages/56/05/192bfa6c10068a4d6cbed0d5d86f47e589d61783b2069c6321e7757043fe/xdis-4.0.3-py27-none-any.whl (94kB)
+     |████████████████████████████████| 102kB 10.3MB/s 
+Collecting click (from spark-parser<1.9.0,>=1.8.7->uncompyle6)
+  Downloading https://files.pythonhosted.org/packages/fa/37/45185cb5abbc30d7257104c434fe0b07e5a195a6847506c074527aa599ec/Click-7.0-py2.py3-none-any.whl (81kB)
+     |████████████████████████████████| 81kB 8.6MB/s 
+Installing collected packages: click, spark-parser, xdis, uncompyle6
+Successfully installed click-7.0 spark-parser-1.8.9 uncompyle6-3.3.5 xdis-4.0.3
+
+反编译工具使用： https://www.cnblogs.com/anliven/p/9185549.html
+
+
+            available_instances = int(attrs.get('instance_count', None) or 0)
+            available_instances = 99999
+            attrs['license_type'] = 'enterprise'
+
 gogs: jluo/123456
 http://192.168.0.21:3000/jluo/ansible.git
+
+gogs/123456
 
 Thank you. We will review your request and get back to you soon.
 
@@ -192,3 +247,146 @@ Below are a few examples.
 > *WARNING*: The playbook will overwrite the content
 > of `pg_hba.conf` and strip all comments from `supervisord.conf`.  Run this
 > only on a clean virtual machine if you are not ok with this behavior.
+
+
+
+
+安装ansible tower的RPM包
+=====================================================================================
+[root@linux epel-7-x86_64]# rpm -ivh *.rpm
+warning: ansible-2.8.0-1.el7ae.noarch.rpm: Header V3 RSA/SHA256 Signature, key ID fd431d51: NOKEY
+error: Failed dependencies:
+        python-jinja2 is needed by ansible-2.8.0-1.el7ae.noarch
+        python-paramiko is needed by ansible-2.8.0-1.el7ae.noarch
+        python-jinja2 is needed by ansible-2.8.2-1.el7ae.noarch
+        python-paramiko is needed by ansible-2.8.2-1.el7ae.noarch
+        libtcl8.5.so()(64bit) is needed by postgresql96-pltcl-9.6.6-1PGDG.el7.x86_64
+        tcl is needed by postgresql96-pltcl-9.6.6-1PGDG.el7.x86_64
+        python-docutils is needed by python2-daemon-2.1.2-7.el7at.noarch
+        socat is needed by rabbitmq-server-3.7.4-2.el7at.noarch
+[root@linux epel-7-x86_64]# yum install socat
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirror.0x.sg
+ * extras: mirrors.aliyun.com
+ * updates: mirrors.aliyun.com
+Resolving Dependencies
+--> Running transaction check
+---> Package socat.x86_64 0:1.7.3.2-2.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+============================================================================================================================================================================================
+ Package                                    Arch                                        Version                                             Repository                                 Size
+============================================================================================================================================================================================
+Installing:
+ socat                                      x86_64                                      1.7.3.2-2.el7                                       base                                      290 k
+
+Transaction Summary
+============================================================================================================================================================================================
+Install  1 Package
+
+Total download size: 290 k
+Installed size: 1.1 M
+Is this ok [y/d/N]: y
+Downloading packages:
+socat-1.7.3.2-2.el7.x86_64.rpm                                                                                                                                       | 290 kB  00:00:00     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : socat-1.7.3.2-2.el7.x86_64                                                                                                                                               1/1 
+  Verifying  : socat-1.7.3.2-2.el7.x86_64                                                                                                                                               1/1 
+
+Installed:
+  socat.x86_64 0:1.7.3.2-2.el7                                                                                                                                                              
+
+Complete!
+[root@linux epel-7-x86_64]# yum install tcl python-jinja2 python-paramiko python-jinja2 python-paramiko libtcl
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirror.0x.sg
+ * extras: mirrors.aliyun.com
+ * updates: mirrors.aliyun.com
+No package libtcl available.
+Resolving Dependencies
+--> Running transaction check
+---> Package python-jinja2.noarch 0:2.7.2-3.el7_6 will be installed
+--> Processing Dependency: python-babel >= 0.8 for package: python-jinja2-2.7.2-3.el7_6.noarch
+--> Processing Dependency: python-markupsafe for package: python-jinja2-2.7.2-3.el7_6.noarch
+---> Package python-paramiko.noarch 0:2.1.1-9.el7 will be installed
+---> Package tcl.x86_64 1:8.5.13-8.el7 will be installed
+--> Running transaction check
+---> Package python-babel.noarch 0:0.9.6-8.el7 will be installed
+---> Package python-markupsafe.x86_64 0:0.11-10.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+============================================================================================================================================================================================
+ Package                                            Arch                                    Version                                          Repository                                Size
+============================================================================================================================================================================================
+Installing:
+ python-jinja2                                      noarch                                  2.7.2-3.el7_6                                    updates                                  518 k
+ python-paramiko                                    noarch                                  2.1.1-9.el7                                      updates                                  269 k
+ tcl                                                x86_64                                  1:8.5.13-8.el7                                   base                                     1.9 M
+Installing for dependencies:
+ python-babel                                       noarch                                  0.9.6-8.el7                                      base                                     1.4 M
+ python-markupsafe                                  x86_64                                  0.11-10.el7                                      base                                      25 k
+
+Transaction Summary
+============================================================================================================================================================================================
+Install  3 Packages (+2 Dependent packages)
+
+Total download size: 4.0 M
+Installed size: 14 M
+Is this ok [y/d/N]: y
+Downloading packages:
+(1/5): python-paramiko-2.1.1-9.el7.noarch.rpm                                                                                                                        | 269 kB  00:00:00     
+(2/5): python-jinja2-2.7.2-3.el7_6.noarch.rpm                                                                                                                        | 518 kB  00:00:00     
+(3/5): python-markupsafe-0.11-10.el7.x86_64.rpm                                                                                                                      |  25 kB  00:00:01     
+(4/5): python-babel-0.9.6-8.el7.noarch.rpm                                                                                                                           | 1.4 MB  00:00:08     
+(5/5): tcl-8.5.13-8.el7.x86_64.rpm                                                                                                                                   | 1.9 MB  00:03:07     
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                        22 kB/s | 4.0 MB  00:03:07     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : python-markupsafe-0.11-10.el7.x86_64                                                                                                                                     1/5 
+  Installing : python-babel-0.9.6-8.el7.noarch                                                                                                                                          2/5 
+  Installing : python-jinja2-2.7.2-3.el7_6.noarch                                                                                                                                       3/5 
+  Installing : python-paramiko-2.1.1-9.el7.noarch                                                                                                                                       4/5 
+  Installing : 1:tcl-8.5.13-8.el7.x86_64                                                                                                                                                5/5 
+  Verifying  : python-babel-0.9.6-8.el7.noarch                                                                                                                                          1/5 
+  Verifying  : 1:tcl-8.5.13-8.el7.x86_64                                                                                                                                                2/5 
+  Verifying  : python-jinja2-2.7.2-3.el7_6.noarch                                                                                                                                       3/5 
+  Verifying  : python-paramiko-2.1.1-9.el7.noarch                                                                                                                                       4/5 
+  Verifying  : python-markupsafe-0.11-10.el7.x86_64                                                                                                                                     5/5 
+
+Installed:
+  python-jinja2.noarch 0:2.7.2-3.el7_6                              python-paramiko.noarch 0:2.1.1-9.el7                              tcl.x86_64 1:8.5.13-8.el7                             
+
+Dependency Installed:
+  python-babel.noarch 0:0.9.6-8.el7                                                          python-markupsafe.x86_64 0:0.11-10.el7                                                         
+
+Complete!
+[root@linux epel-7-x86_64]# yum install tcl python-jinja2 python-paramiko python-jinja2 python-paramiko libtcl
+
+
+
+
+安装ansible依赖包
+https://releases.ansible.com/ansible/
+[root@linux epel-7-x86_64]# rpm -ivh *.rpm   
+warning: ansible-2.8.0-1.el7ae.noarch.rpm: Header V3 RSA/SHA256 Signature, key ID fd431d51: NOKEY
+error: Failed dependencies:
+        python-docutils is needed by python2-daemon-2.1.2-7.el7at.noarch
+[root@linux epel-7-x86_64]# yum install python2-daemon
+
+
+
+要看的link:
+https://docs.ansible.com/ansible/latest/user_guide/vault.html
+https://docs.ansible.com/ansible/latest/user_guide/playbooks.html
