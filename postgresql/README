@@ -1,1 +1,10 @@
 https://dbeaver.io/download/
+
+
+1. How to install Postgresql via binary package; (15min)
+2. How to connect to a remote Postgresql; (5min)
+3. The client tools of Postgresql; (5min)
+4. Study Postgresql step by step; (5min)
+5. Compare the Postgresql, Oracle and Mysql; (10 min)
+6. A Spring boot example with mutli datasources; (10 min)
+7. FAQ; (10 min)
