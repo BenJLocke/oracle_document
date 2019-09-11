@@ -1,5 +1,7 @@
 https://dbeaver.io/download/
 
+https://github.com/BenJLocke/postgresql_demo
+
 
 1. How to install Postgresql via binary package; (15min)
 2. How to connect to a remote Postgresql; (5min)
