@@ -8,3 +8,260 @@ https://dbeaver.io/download/
 5. Compare the Postgresql, Oracle and Mysql; (10 min)
 6. A Spring boot example with mutli datasources; (10 min)
 7. FAQ; (10 min)
+
+Note:
+1. How to config a Postgresql Cluster.
+2. The HA solutions:
+D:\files\opensource\postgresql\package\postgresql-10.9-1-linux-x64-binaries\pgsql\doc\postgresql\html\different-replication-solutions.html
+
+
+HA
+https://www.postgresql.org/docs/10/runtime-config-wal.html
+https://www.postgresql.org/docs/10/runtime-config-replication.html
+http://www.postgres.cn/docs/10/different-replication-solutions.html
+中文帮助文档：
+http://www.postgres.cn/docs/10/runtime.html
+
+过程语言：
+http://www.postgres.cn/docs/10/plpgsql.html
+
+
+PostgreSQL 权限管理
+http://www.pgsql.tech/article_101_10000036
+
+
+备份
+http://www.pgsql.tech/project_301_10000041
+
+
+网上资料： http://www.pgsql.tech/doc_401
+http://www.postgres.cn/news/typelist/1/%E4%BC%9A%E8%AE%AE%E8%B5%84%E6%96%99
+merg
+http://blog.osdba.net/527.html
+
+PostgreSQL官方手册下载链接
+http://www.pgsql.tech/article_101_10000023
+
+
+PPT
+http://www.postgres.cn/news/viewone/1/297
+
+
+想分享的东西：
+1、role
+2、spring boot的例子
+3、备份和高可用
+4、数据类型
+5、性能调优
+
+Success. You can now start the database server using:
+
+    D:/tools/pgsql/bin/pg_ctl -D ../data -l logfile start
+
+CREATE ROLE mydb_admin LOGIN PASSWORD 'something';
+CREATE DATABASE mydb WITH owner = mydb_admin;
+
+
+
+
+Example 2-6. Defining default privileges on a schema
+GRANT USAGE ON SCHEMA my_schema TO PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA my_schema
+GRANT SELECT, REFERENCES ON TABLES TO PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA my_schema
+GRANT ALL ON TABLES TO mydb_admin WITH GRANT OPTION;
+ALTER DEFAULT PRIVILEGES IN SCHEMA my_schema
+GRANT SELECT, UPDATE ON SEQUENCES TO public;
+ALTER DEFAULT PRIVILEGES IN SCHEMA my_schema
+GRANT ALL ON FUNCTIONS TO mydb_admin WITH GRANT OPTION;
+ALTER DEFAULT PRIVILEGES IN SCHEMA my_schema
+GRANT USAGE ON TYPES TO PUBLIC;
+
+
+
+备份：
+To create a compressed, single database backup:
+pg_dump -h localhost -p 5432 -U someuser -F c -b -v -f mydb.backup mydb
+
+To create a plain-text single database backup, including a  CREATE DATABASE statement:
+pg_dump -h localhost -p 5432 -U someuser -C -F p -b -v -f mydb.backup mydb
+
+To create a compressed backup of tables whose names start with “pay” in any schema:
+pg_dump -h localhost -p 5432 -U someuser -F c -b -v -t *.pay* -f pay.backup mydb
+
+To create a compressed backup of all objects in the  hr and  payroll schemas:
+pg_dump -h localhost -p 5432 -U someuser -F c -b -v -n hr -n payroll -f hr.back-up mydb
+
+To create a compressed backup of all objects in all schemas, excluding the  public schema:
+pg_dump -h localhost -p 5432 -U someuser -F c -b -v -N public -f all_sch_except_pub.backup mydb
+
+To create a plain-text SQL backup of select tables, useful for porting structure and data to lower versions of PostgreSQL or non-PostgreSQL databases (plain text generates a
+SQL script that you can run on any system that speaks SQL):
+pg_dump -h localhost -p 5432 -U someuser -F p --column-inserts -f select_tables.backup mydb
+
+
+
+To back up roles and tablespaces:
+pg_dumpall -h localhost -U postgres --port=5432 -f myglobals.sql --globals-only
+If you care only about backing up roles and not tables spaces, use the  --roles-only
+option:
+pg_dumpall -h localhost -U postgres --port=5432 -f myroles.sql --roles-only
+
+To restore a full backup and ignore errors:
+psql -U postgres -f myglobals.sql
+To restore, stopping if any error is found:
+psql -U postgres --set ON_ERROR_STOP=on -f myglobals.sql
+To restore to a specific database:
+psql -U postgres -d mydb -f select_objects.sql
+
+
+创建表空间：
+CREATE TABLESPACE secondary LOCATION 'C:/pgdata94_secondary';
+ALTER DATABASE mydb SET TABLESPACE secondary;
+ALTER TABLE mytable SET TABLESPACE secondary;
+ALTER TABLESPACE pg_default MOVE ALL TO secondary;
+
+
+监控：
+很多管理操作： PostgreSQL 9 Administration Cookbook Second Edition
+
+What if I want to know whether that computer is connected?
+SELECT datname, usename, client_addr, client_port, application_name FROM pg_stat_activity;
+
+What if I want to repeatedly execute a query in psql?
+gabriele=> SELECT count(*) FROM pg_stat_activity;
+count
+-------
+1
+(1 row)
+gabriele=> \watch 5
+Watch every 5s Tue Aug 27 21:47:24 2013
+count
+-------
+1
+(1 row)
+… <snip> …
+
+
+Checking which queries are active or blocked
+SELECT datname, usename, query FROM pg_stat_activity WHERE waiting = true;
+
+
+This catches only queries waiting on locks
+db=# SELECT pg_sleep(10);
+<it "stops" for 10 seconds here>
+pg_sleep
+----------
+(1 row
+
+
+
+Knowing who is blocking a query
+SELECT
+ w.query AS waiting_query,
+ w.pid AS waiting_pid,
+ w.usename AS waiting_user,
+ l.query AS locking_query,
+ l.pid AS locking_pid,
+ l.usename AS locking_user,
+ t.schemaname || '.' || t.relname AS tablename
+ FROM pg_stat_activity w
+ JOIN pg_locks l1 ON w.pid = l1.pid AND NOT l1.granted
+ JOIN pg_locks l2 ON l1.relation = l2.relation AND l2.granted
+ JOIN pg_stat_activity l ON l2.pid = l.pid
+ JOIN pg_stat_user_tables t ON l1.relation = t.relid
+ 
+ 
+ 
+ Killing a specific session
+ pg_terminate_backend(pid)
+ 
+ 
+ Using statement timeout to clean up queries that take too long to run
+hannu=# SET statement_timeout TO '3 s';
+SET
+hannu=# SELECT pg_sleep(10);
+ERROR: canceling statement due to statement timeout
+
+
+
+Killing Idle in transaction queries
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE state = 'idle in transaction'
+AND current_timestamp - query_start > '10 min';
+
+
+存储过程： PostgreSQL Server Programming, 2nd Edition
+CREATE FUNCTION mid(keyfield varchar, starting_point integer) RETURNS
+varchar
+AS
+$$
+BEGIN
+RETURN substring(keyfield,starting_point);
+END
+$$
+LANGUAGE plpgsql;
+
+SELECT mid('Kirk L. Roybal',9);
+The preceding line of code yields the following result:
+mid
+--------
+Roybal
+(1 row)
+
+
+CREATE OR REPLACE FUNCTION ambiguous(parameter varchar) RETURNS integer AS
+$$
+DECLARE retval integer;
+BEGIN
+INSERT INTO parameter (parameter) VALUES (parameter) RETURNING id INTO
+retval;
+RETURN retval;
+END;
+$$
+LANGUAGE plpgsql;
+SELECT ambiguous ('parameter');
+
+
+CREATE OR REPLACE FUNCTION fib(n integer)
+RETURNS INTEGER AS $$
+DECLARE
+counter integer := 0;
+a integer := 0;
+b integer := 1;
+BEGIN
+IF (n < 1) THEN
+RETURN 0;
+END IF;
+LOOP
+EXIT WHEN counter = n;
+counter := counter + 1;
+SELECT b,a+b INTO a,b;
+END LOOP;
+RETURN a;
+END;
+$$
+LANGUAGE plpgsql;
+SELECT fib(4);
+
+
+CREATE OR REPLACE FUNCTION positives(
+INOUT a int,
+INOUT b int,
+INOUT c int)
+AS $$
+BEGIN
+IF a < 0 THEN a = null; END IF;
+IF b < 0 THEN b = null; END IF;
+IF c < 0 THEN c = null; END IF;
+END;
+$$ LANGUAGE plpgsql;
+When we run the previous function, it only returns a single row of data with three
+columns, as shown here:
+hannu=# SELECT * FROM positives(-1, 1, 2);
+-[ RECORD 1 ]
+a |
+b | 1
+c | 2
+
