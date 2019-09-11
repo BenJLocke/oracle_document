@@ -1,0 +1,7 @@
+https://www.sonarqube.org/
+https://cloud.tencent.com/developer/news/257212
+https://rules.sonarsource.com/
+https://www.sonarqube.org/
+https://docs.sonarqube.org/display/PLUG/Writing+Custom+Java+Rules+101
+https://rules.sonarsource.com/java/
+https://wiki.sei.cmu.edu/confluence/display/java/

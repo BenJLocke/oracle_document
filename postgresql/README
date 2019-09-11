@@ -264,4 +264,96 @@ hannu=# SELECT * FROM positives(-1, 1, 2);
 a |
 b | 1
 c | 2
+=======
+Postgresql下载页面：
+https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+zip安装包：
+https://www.enterprisedb.com/download-postgresql-binaries
+
+文档：
+https://www.postgresql.org/docs/
+
+
+开源官网：
+https://www.postgresql.org/docs/
+企业版官网：
+https://www.enterprisedb.com
+
+
+
+客户端：
+https://www.devart.com/dbforge/postgresql/studio/  要钱
+https://sourceforge.net/projects/pgsqlclient/ 只支持到 PostgreSQL 7.4+
+
+http://wiki.postgresql.org/wiki/PostgreSQL_Clients
+客户端的列表
+https://www.pgadmin.org/
+
+D:\software\postgresql
+
+./configure
+make
+su
+make install
+adduser postgres
+mkdir /usr/local/pgsql/data
+chown postgres /usr/local/pgsql/data
+su - postgres
+/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data >logfile 2>&1 &
+/usr/local/pgsql/bin/createdb test
+/usr/local/pgsql/bin/psql test
+
+
+CREATE ROLE name;
+
+SELECT rolname FROM pg_roles;
+
+
+创建一个登录用户：
+CREATE ROLE name LOGIN;
+CREATE USER name;
+ben=# grant all on test to test;
+ben=# grant all on test to test;
+ben=# ALTER ROLE test login PASSWORD '123456'
+ben-# ;
+
+比较
+https://db-engines.com/en/system/Oracle%3BPostgreSQL
+很好的对比了三个数据库的特征：而且非常新
+https://db-engines.com/en/system/MySQL%3BOracle%3BPostgreSQL
+
+
+
+初始化数据库：三种类型：普通，json，jsonb
+https://blog.csdn.net/qq_31156277/article/details/84502159
+--1.创建user_ini表并插入200w数据。
+create table user_ini(
+	id int4,
+	user_id int8,
+	user_name character varying(64),
+	create_time timestamp(6) with time zone default clock_timestamp()
+);
+--1.1插入数据
+INSERT INTO user_ini(id,user_id,user_name)
+SELECT r,round(random()*20000),r||'_frances'
+FROM generate_series(1,20000) AS r;
+
+--2.使用user_ini表生成json、jsonb数据，创建user_ini_json，user_ini_jsonb表。
+CREATE TABLE tbl_user_json(id serial,user_info json);
+
+CREATE TABLE tbl_user_jsonb(id serial,user_info jsonb);
+
+json数据库的例子：里面有一些例子的操作
+https://www.jianshu.com/p/c684c6441237
+一些例子
+https://blog.csdn.net/jincm13/article/details/53353268
+
+
+Oracle to postgresql
+https://wiki.postgresql.org/wiki/Converting_from_other_Databases_to_PostgreSQL#Oracle
+https://www.postgresql.org/docs/10/plpgsql-porting.html
+http://www.convert-in.com/ora2pgs.htm
+
 
