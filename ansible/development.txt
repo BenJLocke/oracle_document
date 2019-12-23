@@ -1,0 +1,68 @@
+https://docs.ansible.com/ansible/latest/modules/net_put_module.html#net-put-module
+
+命令模块
+https://docs.ansible.com/ansible/latest/modules/list_of_commands_modules.html
+https://docs.ansible.com/ansible/latest/modules/shell_module.html#shell-module
+https://docs.ansible.com/ansible/latest/modules/script_module.html#script-module
+https://docs.ansible.com/ansible/latest/modules/command_module.html#command-module
+
+服务器分组管理
+https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
+
+模板
+https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html
+
+创建role
+https://galaxy.ansible.com/docs/contributing/creating_role.html
+
+
+文件模块：
+https://docs.ansible.com/ansible/latest/modules/list_of_files_modules.html
+	acl – Set and retrieve file ACL information
+	archive – Creates a compressed archive of one or more files or trees
+	assemble – Assemble configuration files from fragments
+	blockinfile – Insert/update/remove a text block surrounded by marker lines
+	copy – Copy files to remote locations
+	fetch – Fetch files from remote nodes
+	file – Manage files and file properties
+	find – Return a list of files based on specific criteria
+	ini_file – Tweak settings in INI files
+	iso_extract – Extract files from an ISO image
+	lineinfile – Manage lines in text files
+	patch – Apply patch files using the GNU patch tool
+	read_csv – Read a CSV file
+	replace – Replace all instances of a particular string in a file using a back-referenced regular expression
+	stat – Retrieve file or file system status
+	synchronize – A wrapper around rsync to make common tasks in your playbooks quick and easy
+	tempfile – Creates temporary files and directories
+	template – Template a file out to a remote server
+	unarchive – Unpacks an archive after (optionally) copying it from the local machine
+	xattr – Manage user defined extended attributes
+	xml – Manage bits and pieces of XML files or strings
+	
+网络工具
+https://docs.ansible.com/ansible/latest/modules/list_of_net_tools_modules.html
+Basics
+get_url – Downloads files from HTTP, HTTPS, or FTP to node
+slurp – Slurps a file from remote nodes
+uri – Interacts with webservices
+
+
+工具
+https://docs.ansible.com/ansible/latest/modules/list_of_utilities_modules.html
+assert – Asserts given expressions are true
+async_status – Obtain status of asynchronous task
+debug – Print statements during execution
+fail – Fail with custom message
+import_playbook – Import a playbook
+import_role – Import a role into a play
+import_tasks – Import a task list
+include – Include a play or task list
+include_role – Load and execute a role
+include_tasks – Dynamically include a task list
+include_vars – Load variables from files, dynamically within a task
+pause – Pause playbook execution
+set_fact – Set host facts from a task
+set_stats – Set stats for the current ansible run
+wait_for – Waits for a condition before continuing
+wait_for_connection – Waits until remote system is reachable/usable
